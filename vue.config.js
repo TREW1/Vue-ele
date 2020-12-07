@@ -4,6 +4,7 @@ const path = require('path')
 // console.log('项目中某个目录的绝对路径',path.resolve(__dirname,'./src/components'))
 
 module.exports  = {
+	publicPath:process.env.NODE_ENV=== "production"? '':'/',
 	lintOnSave: false,//是否开启语法检测
 	css: {
 		// 是否使用css分离插件 ExtractTextPlugin
@@ -30,4 +31,21 @@ module.exports  = {
 			}
 		}
 	  },
+	  //代理
+	  devServer:{
+		  port:8080,
+		  open:true,
+		  //代理
+		//   LogLevel:'debug',
+		  proxy:{
+			  '/api':{
+				  target:'http://www.web-jshtml.cn/productapi/token/',
+				  changeOrigin:true,
+				  //重写url
+				  pathRewrite:{
+					  '^/api':''
+				  }
+			  }
+		  }     
+	  }
 }

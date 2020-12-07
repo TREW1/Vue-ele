@@ -26,7 +26,7 @@
                         <el-input id="code" v-model="ruleForm.code"></el-input>
                     </el-col>
                     <el-col :span="9">
-                        <el-button type="success" class='block' @click="getCode">获取验证码</el-button>
+                        <el-button type="success" class='block'>获取验证码</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -39,16 +39,12 @@
 </template>
 <script>
 import validateUtils from '@/utils/validate.js'
-import {onMounted,reactive,ref} from '@vue/composition-api'
-import {get_code} from '@/api/login.js'
 export default {
-    setup(prop,{refs,root}){
-        //——————————————————————————————————生命周期————————————————————————————————
-        
-        //——————————————————————————————————data————————————————————————————————
-         //验证码
-        let validatecode = (rule, value, callback) => {
-            ruleForm.code =value= validateUtils.validate_inputValue(value,'code');
+    data(){
+        //验证码
+        var validatecode = (rule, value, callback) => {
+            this.ruleForm.code =value= validateUtils.validate_inputValue(value,'code');
+            
             if (!value) {
                 return callback(new Error('验证码不能为空'));
             }else if(validateUtils.test_code(value)){
@@ -58,8 +54,9 @@ export default {
             }
       };
       //邮箱
-      let validateUsername = (rule, value, callback) => {
-          ruleForm.username =value=validateUtils.validate_inputValue(value,'email');
+      var validateUsername = (rule, value, callback) => {
+          this.ruleForm.username =value=validateUtils.validate_inputValue(value,'email');
+         
             if (value === '') {
                 callback(new Error('请输入邮箱'));
             } else if(validateUtils.test_email(value)){
@@ -69,8 +66,9 @@ export default {
             }
       };
       //密码
-      let validatepassword = (rule, value, callback) => {
-          ruleForm.password =value=validateUtils.validate_inputValue(value,'password');
+      var validatepassword = (rule, value, callback) => {
+          this.ruleForm.password =value=validateUtils.validate_inputValue(value,'password');
+           
             if (value === '') {
                 callback(new Error('请输入密码'));
             } else if (validateUtils.test_password(value)) {
@@ -80,33 +78,33 @@ export default {
             }
       };
       //重复密码
-      let validatepassword1 = (rule, value, callback) => {
-          if(mode.value =='login'){
+      var validatepassword1 = (rule, value, callback) => {
+          if(this.mode =='login'){
               callback();
               return
           }
-          ruleForm.password1 =value=validateUtils.validate_inputValue(value,'password1');
-           if(value!==ruleForm.password){
+          this.ruleForm.password1 =value=validateUtils.validate_inputValue(value,'password1');
+           if(value!==this.ruleForm.password){
                 callback(new Error('两次密码不一致'));
             }else{
                 callback();
             }
       };
-        //定义tob切换模式
-        const mode = ref('login')
-        //定义表单相关数据
-        const menuTab=reactive([
+        return {
+            mode:'login',
+            menuTab:[
                 {txt:'登录',current:true,type:'login'},
                 {txt:'注册',current:false,type:'register'}
-            ])
-        const ruleForm = reactive ({
+            ],
+
+            ruleForm: {
                     username: '',
                     password: '',
                     password1:'',
                     code: ''
-            })
-        const rules=reactive( {
-        username:[
+            },
+            rules: {
+                    username: [
                         { validator: validateUsername, trigger: 'blur' }
                     ],
                     password: [
@@ -118,53 +116,27 @@ export default {
                     code: [
                         { validator: validatecode, trigger: 'blur' }
                     ]
-                  })
-        //——————————————————————————————————metods————————————————————————————————
-        const submitForm=(formName=>{
-            refs[formName].validate((valid) =>{
+                  }
+     }   
+    },
+    methods:{
+        submitForm(formName){
+            this.$refs[formName].validate((valid) =>{
                 if(valid){
                     alert('submit!');
                 }else{
                     consoloe.log('error submit!!');
                     return false
                 }
-            })
-        })
-        const toggleMenu=((item)=>{
-            menuTab.map(item => item.current = false)
+            });
+        },
+        toggleMenu(item){
+            this.menuTab.map(item => item.current = false)
             item.current= true
-            mode.value=item.type
-            refs['ruleForm'].resetFields()
-        })
-        const getCode=(()=>{
-            if(ruleForm.username==''){
-               root.$message.error('邮箱不能为空');
-               return false
-            }
-            const data ={
-                username:ruleForm.username,
-                // module:"login",
-                module:mode.value
-            }
-            get_code(data).then((res)=>{
-                console.log(res)
-               root.$message.success(res.data.message);
-            }).catch((err)=>{
-                console.log(2)
-            })
-            
-        })
-        return{
-            mode,
-            menuTab,
-            ruleForm,
-            rules,
-            toggleMenu,
-            submitForm,
-            getCode
+            this.mode=item.type
         }
     }
-}
+};
 </script>
 <style lang="scss">
  #login{
@@ -175,7 +147,7 @@ export default {
 .login-wrap{
     width: 330px;
     height:300px;
-    margin:200px auto;
+    margin:0 auto;
 }
 .menu-tab{
     text-align: center;
