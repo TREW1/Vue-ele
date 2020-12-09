@@ -11,6 +11,7 @@ http.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
     // console.log('请求参数',config.headers)
     config.headers.token='xxxxx'
+    // console.log(config.data)
     return config;
   }, function (error) {
     // 对请求错误做些什么
@@ -19,12 +20,14 @@ http.interceptors.request.use(function (config) {
 
 // 添加响应拦截器
 http.interceptors.response.use(function (response) {
-  // console.log(response);
-  if(response.data.status !=0){
-    Message.error(response.data.message);
+  console.log(response);
+  if(response.data.resCode !=0){
+    Message.success(response.data.message);
+    console.log(response)
     return Promise.reject(error);
   }
     // 对响应数据做点什么
+    console.log()
     return response
   }, function (error) {
     // 对响应错误做点什么
