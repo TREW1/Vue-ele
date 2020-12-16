@@ -44,7 +44,11 @@ import {get_code,do_register,do_login} from '@/api/login.js'
 export default {
     setup(prop,{refs,root}){
         //—————————————————————————————————————————————————————————生命周期————————————————————————————————————————————————————————————
-        
+        // onMounted(()=>{
+        //     get_code().then(res=>{
+        //         console.log(res)
+        //     })
+        // })
         //——————————————————————————————————————————————————————————data——————————————————————————————————————————————————————————————
         const status_username=ref(false)
         const status_password=ref(false)
@@ -251,12 +255,26 @@ export default {
                 password:ruleForm.password,
                 code:ruleForm.code
             }
-            do_login(data).then(res=>{
-                //提示登录成功
-                root.$message.success(res.data.message)
+            root.$store.dispatch('app/login',data).then(res=>{
+                 root.$message.success(res.data.message)
+                //登录然后跳转到页面
+                root.$router.push({
+                    name:'Home'
+                })
             }).catch(err=>{
 
             })
+        //     //网络请求 vuex- actions -->mutations -->state
+        //     do_login(data).then(res=>{
+        //         //提示登录成功
+        //         root.$message.success(res.data.message)
+        //         //登录然后跳转到页面
+        //         root.$router.push({
+        //             name:'Home'
+        //         })
+        //     }).catch(err=>{
+
+        //     })
         }
         //执行注册
         const doRegister=()=>{
@@ -276,17 +294,33 @@ export default {
             })
         }
         //发送验证码时验证相关字段
-        const validateFileds=()=>{
-          const _filed_arr =[
-              {filed:'username',flag:status_username.value,message:'邮箱格式错误'},
-              {filed:'passwored',flag:status_password.value,message:'密码格式错误'},
-              {filed:'passwored1',flag:status_password1.value,message:'重复密码错误'}
-          ].filter(item=>!item.flag)
-          return{
-              result:status_username.value && status_password.value && status_password1.value,
-              filed:_filed_arr
-          }
-        }
+          const validateFileds = () => {
+      const result = status_username.value && status_password.value
+      const _filed_arr = [
+        {
+          filed: 'username',
+          flag: status_username.value,
+          message: '邮箱格式错误',
+        },
+        { filed: 'password', flag: status_password.value, message: '密码错误' },
+      ]
+      if (mode.value === 'register') {
+        _filed_arr.push({
+          filed: 'password1',
+          flag: status_password1.value,
+          message: '重复密码错误',
+        })
+        result: status_username.value &&
+          status_password.value &&
+          status_password1.value
+      }
+
+
+      return {
+        result: result,
+        filed: _filed_arr.filter((item) => !item.flag),
+      }
+    }
         return{
             mode,
             menuTab,

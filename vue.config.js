@@ -18,6 +18,18 @@ module.exports  = {
             }
 		},
 	},
+	//配置解析svg的loader
+	chainWebpack:(config)=>{
+		const svgRule = config.module.rule("svg");     
+                svgRule.uses.clear();     
+                svgRule       
+                .use("svg-sprite-loader")       
+                .loader("svg-sprite-loader")       
+                .options({         
+                symbolId: "icon-[name]",         
+                 include: ["./src/icons"]       
+     });  
+	},
 	//配置目录的别名
 	configureWebpack: (config) => {
 		config.resolve = {

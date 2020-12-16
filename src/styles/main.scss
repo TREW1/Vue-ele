@@ -8,14 +8,23 @@
 
 // 重置浏览器的默认样式
 @import './reset.scss';
-
+//引入修改element的样式
+@import './element.scss';
 // 主题的css样式
 @import './theme.scss';
-
-// body {
-//     // background-color: $bg-color;
-
-// }
-
-
 // 导入的scss 是有上下文的
+//引入全局样式配置
+@import './config.scss';
+
+//常见的样式
+.pull-right {float:right;}
+.pull-left{float: left;}
+
+//定义动画函数
+@mixin webkit ($type,$value){
+    -webkit-#{$type}:$value;//chrome
+  -moz-#{$type}:$value;//firefox
+  -o-#{$type}:$value;//opera
+  -ms-#{$type}:$value;//ie
+    
+}

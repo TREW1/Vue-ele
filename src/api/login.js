@@ -3,6 +3,13 @@
 
 //获取验证码
 export const get_code = (data)=>{
+    // return axios.request({
+    //     url:'/mock/code.json',
+    //     method:'get',
+    //     data:{
+    //         "username":"123@qq.com"
+    //     }
+    // })
     return axios.request({
         method:'post',
         url:'/getSms/',
